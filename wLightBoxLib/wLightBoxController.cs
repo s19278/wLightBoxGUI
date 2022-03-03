@@ -8,16 +8,21 @@ using wLightBoxGUI.wLightBoxLib.Models;
 
 namespace wLightBoxGUI
 {
+	//whole class represent a connection with 1 device, its written this way so we can handle multiple devices in one gui if we want toii
 	public class wLightBoxController
 	{
+		//Container for GET /info
 		public Device device;
+		//Container for GET /api/rgbw/extended/state
 		public RootRgbw settings;
+		//Instance of HttpClient for api requests
 		public HttpClient client;
+		//Private constructor to prevent creating instance of class without correct connection to device
 		private wLightBoxController() {
 
 			 
 		}
-
+		//Static method to ensure that given adress is correct. Return instance of class
 		public static async Task<wLightBoxController> wLightBoxConnect(string url) {
 			HttpClient client = new HttpClient();
 			RootRgbw settings = null;
@@ -51,7 +56,7 @@ namespace wLightBoxGUI
 			}
 
 		}
-
+		//Handling Get /api/rgbw/extended/state request
 		public async Task GetExtState() {
 
 			HttpResponseMessage response = await client.GetAsync("/api/rgbw/extended/state");
@@ -64,7 +69,7 @@ namespace wLightBoxGUI
 			}
 
 		}
-
+		//Handling POST /api/rgbw/extended/set request
 		public async Task<Boolean> UpdateSettings(RootRgbw _settings) {
 
 			var message = new StringContent(JsonConvert.SerializeObject(_settings), Encoding.UTF8, "application/json");

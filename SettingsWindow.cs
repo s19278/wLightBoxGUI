@@ -26,11 +26,13 @@ namespace wLightBoxGUI
 			this.informationBox.Controls[3].Text = lb.device.type;
 			this.informationBox.Controls[4].Text = lb.device.ip;
 			this.informationBox.Controls[5].Text = lb.device.id;
+			//Timer handle automatic refresh of settings
 			timer.Interval = 1000;
 			timer.Tick += autoSettingsRefresh;
 			timer.Start();
 
 		}
+		//Method is responsible for refreshing a Settings in WLightBoxController object, it also handles connection loss if such occours
 		private async void autoSettingsRefresh(object sender, EventArgs e)
 		{
 			timer.Stop();
@@ -50,6 +52,7 @@ namespace wLightBoxGUI
 				}
 
 			}
+			//on first load, populate combobox thats responsible for choosing effects
 			if (firstIni) {
 				_settings = _lb.settings;
 				comboBox1.DataSource = new BindingSource(_settings.rgbw.effectNames, null);
@@ -73,6 +76,7 @@ namespace wLightBoxGUI
 			this.currentModeLabel.Text = _lb.settings.rgbw.effectNames[_lb.settings.rgbw.effectID];
 
 		}
+		//Handling changes update, 
 		private async void applyButton_Click(object sender, EventArgs e)
 		{
 			if (comboBox1.SelectedIndex != -1)
@@ -80,9 +84,11 @@ namespace wLightBoxGUI
 				_settings.rgbw.effectID = comboBox1.SelectedIndex;
 				comboBox1.SelectedIndex = -1;
 			}
+			//Packing RBG values to hexdecimal string in RGBWW format
 			_settings.rgbw.desiredColor = targetColourBox.BackColor.R.ToString("X2") + targetColourBox.BackColor.G.ToString("X2") + targetColourBox.BackColor.B.ToString("X2") + "0000";
 			Boolean result = false;
 			int failMessage = 0;
+			//handling connection loss on apply button
 			try
 			{
 				result = await _lb.UpdateSettings(_settings);
@@ -111,7 +117,7 @@ namespace wLightBoxGUI
 			}
 			this.Refresh();
 		}
-
+		//Adding color chooser to target color box
 		private void targetColourBox_Click(object sender, EventArgs e)
 		{
 			ColorDialog MyDialog = new ColorDialog();
@@ -121,7 +127,7 @@ namespace wLightBoxGUI
 			if (MyDialog.ShowDialog() == DialogResult.OK)
 				targetColourBox.BackColor = MyDialog.Color;
 		}
-
+		//Conversion of API colour string to RGB values
 		private  int[] HextoDec()
 		{
 
@@ -131,6 +137,7 @@ namespace wLightBoxGUI
 			int[] colors = { red, green, blue };
 			return colors;
 		}
+		//Ensure aplication closing on exit buttons
 		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
 			base.OnFormClosing(e);

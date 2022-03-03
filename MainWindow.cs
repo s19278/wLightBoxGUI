@@ -12,6 +12,7 @@ namespace wLightBoxGUI
 {
 	public partial class MainWindow : Form
 	{
+		//Starting window with a place for ip, thats offer a connect option
 		public MainWindow()
 		{
 			InitializeComponent();
